@@ -1,0 +1,7 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+producer:
+  base-production-time-ms: ${BASE_PRODUCTION_TIME_MS:1000}
+  max-production-delay-ms:  ${MAX_PRODUCTION_DELAY_MS:500}
+  production-fail-probability: ${PRODUCTION_FAIL_PROBABILITY:0.01}
