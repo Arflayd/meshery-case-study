@@ -1,0 +1,31 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: istiogateway-vs
+spec:
+  hosts:
+  - "a0e9292def67847aeb23fb6555b8d4a6-1543356150.us-east-1.elb.amazonaws.com"
+  gateways:
+  - factory-gateway
+  http:
+    - match:
+      - uri:
+          exact: "/"
+      - uri:
+          exact: ""
+      - uri:
+          prefix: "/static"
+      route:
+      - destination:
+          port:
+            number: 80
+          host: frontend
+    - match:
+      - uri:
+          exact: "/api"
+      route:
+      - destination:
+          port:
+            number: 3000
+          host: bottling-plant
+

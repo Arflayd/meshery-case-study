@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: bottles-vs
+spec:
+  hosts:
+  - bottles
+  http:
+  - route:
+    - destination:
+        host: bottles
+        subset: v1
+      weight: 40
+    - destination:
+        host: bottles
+        subset: v2
+      weight: 55
+    - destination:
+        host: bottles
+        subset: v3
+      weight: 5

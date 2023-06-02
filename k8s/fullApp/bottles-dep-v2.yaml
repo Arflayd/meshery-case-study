@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bottles-dep-v2
+  labels:
+    app: bottles
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bottles
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: bottles
+        version: v2
+    spec:
+      containers:
+      - name: bottles
+        image: meshery20/bottle-producer:1.0.0
+        ports:
+        - containerPort: 3002
+        env:
+        - name: SERVER_PORT
+          value: "3002"
+        - name: BASE_PRODUCTION_TIME_MS
+          value: "2"
+        - name: MAX_PRODUCTION_DELAY_MS
+          value: "10"
+        - name: PRODUCTION_FAIL_PROBABILITY
+          value: "0.01"
+
+

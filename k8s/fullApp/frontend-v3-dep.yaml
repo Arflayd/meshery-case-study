@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-v3
+  labels:
+    app: frontend
+    version: v3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+      version: v3
+  template:
+    metadata:
+      labels:
+        app: frontend
+        version: v3
+    spec:
+      containers:
+      - name: frontend
+        image: meshery20/frontend:v3
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
