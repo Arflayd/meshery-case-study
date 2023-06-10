@@ -9,6 +9,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
 
 @Slf4j
 @Component
@@ -36,6 +37,7 @@ public class GrpcServer {
 
         Server server = ServerBuilder
                 .forPort(port)
+                .executor(Executors.newSingleThreadExecutor())
                 .addService(bottleProducer).build();
 
         server.start();
