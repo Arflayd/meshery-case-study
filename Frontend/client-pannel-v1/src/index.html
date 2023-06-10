@@ -4,9 +4,227 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="static/style.css" />
     <title>Document</title>
-    <script src="static/script.js"></script>
+    <script>
+        const headerFields = ['Request number', 'Success count', 'Failure count', 'Time [ms]']
+        const historyRecords = [];
+        let tableRef;
+        let loaderRef;
+        
+        function removeAllChildNodes(parent) {
+            while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
+            }
+        }
+        
+        async function createOrder(number = 0) {
+            const response = await fetch( window.location.origin + '/api?' + new URLSearchParams({
+                number
+            }), {
+              method: "GET",
+              mode: "cors",
+              cache: "no-cache",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+            return response.json();
+        }
+        
+        function createTableCell (text) {
+            const cell = document.createElement('td');
+            cell.appendChild(document.createTextNode(text));
+            return cell;
+        }
+        
+        function createTableRow (cellTexts) {
+            const row = document.createElement('tr');
+            for (const text of cellTexts) {
+                row.appendChild(createTableCell(text));
+            }
+            return row;
+        }
+        
+        function createTableHeader ( headerFields ) {
+            const header = document.createElement('thead');
+            header.appendChild(createTableRow(headerFields));
+            return header;
+        }
+        
+        
+        
+        
+        function createTableBody (historyRecords) {
+            const tbody = document.createElement('tbody');
+          
+            for (const row of historyRecords) {
+                console.log('Row:', row)
+                tbody.appendChild(createTableRow(row)); 
+            }
+        
+            return tbody;
+        }
+        
+        function createTableFooter (historyRecords) {
+            const tfoot = document.createElement('tfoot');
+        
+            const sums = [0, 0, 0];
+            for (const [requestNumber, successNumber, failNumber, time] of historyRecords) {
+                sums[0] += successNumber;
+                sums[1] += failNumber;
+                sums[2] += time;
+            }
+        
+            // const avgs = sums.map( sum => Math.floor( sum/ historyRecords.length));
+            
+            tfoot.appendChild(createTableRow(['Sum',...sums]))
+            // tfoot.appendChild(createTableRow(['Avg',...avgs]))
+        
+            return tfoot;
+        }
+        
+        function rerenderTable () {
+            removeAllChildNodes(tableRef)
+            tableRef.appendChild(createTableHeader(headerFields))
+            if (historyRecords.length) {
+                tableRef.appendChild(createTableBody(historyRecords))
+                tableRef.appendChild(createTableFooter(historyRecords))
+            }
+        }  
+        
+        async function makeRequest () {
+            loaderRef.style.display = 'inline-block';
+            const startTime = new Date();
+            try {
+                const data = await createOrder(100);
+                const endTime = new Date();
+                historyRecords.push([historyRecords.length + 1, data.succes, data.fail, endTime.getTime() - startTime.getTime()])
+            } catch (error) {
+                const endTime = new Date();
+                historyRecords.push([historyRecords.length + 1, 0, 100, endTime.getTime() - startTime.getTime()])
+                
+            }
+            rerenderTable()
+            loaderRef.style.display = 'none';
+        }
+        
+        
+        function initialize () {
+            tableRef = document.getElementById('orders');
+            loaderRef = document.getElementById('loader');
+            rerenderTable()
+        }</script>
+        <style>
+            body {
+    background-color: rgb(185, 185, 185);
+    font-family: arial;
+}
+
+#main button {
+    width: 80%;
+    padding: 0.4em;
+    font-size: 2em;
+    border-radius: 0.15em;
+    background-color: aliceblue;
+}
+
+#main {
+    text-align: center;
+    width: 60%;
+    min-width: 600px;
+    margin: 0 auto;
+}
+
+td {
+    font-size: 1.3em;
+    padding: 0.5em;
+    border-top: 1px solid gray;
+}
+
+#orders {
+    margin: 1em auto;
+    width: 80%;
+    table-layout: fixed;
+    border-collapse:collapse;
+}
+
+#orders thead {
+    background-color: rgb(139, 201, 254);
+    border-bottom: 1px solid #aaa;
+}
+
+#orders > tbody tr {
+    background-color: rgb(197, 228, 255);
+}
+
+#orders > tbody tr:nth-child(even) {
+    background-color:azure;
+}
+
+#orders > tfoot {
+    border-top: 1px solid #aaa;
+    background-color: rgb(139, 201, 254);
+}
+
+table {
+    outline: 1px solid gray;
+}
+
+.clear {
+    clear: both;
+}
+
+#loader {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #aaa;
+    opacity: 0.5;
+}
+
+#orders > div > div {
+    box-sizing: border-box;
+    width: 50%;
+    text-align: center;
+    font-size: 1.3em;
+    padding: 0.4em;
+    display: inline;
+    text-align: center;
+}
+
+.lds-dual-ring {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+0% {
+    transform: rotate(0deg);
+}
+100% {
+    transform: rotate(360deg);
+}
+  }
+  
+        </style>
 </head>
 <body onload="initialize()">
     <div id="loader">

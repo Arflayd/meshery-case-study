@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+
+import "google/protobuf/empty.proto";
+package names;
+
+service DrinkApi {
+    rpc GetDrink(google.protobuf.Empty) returns (Drink) {}
+}
+
+message Drink {
+    string taste = 1;
+}

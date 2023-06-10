@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package org.agh.suu.proto;
+import "google/protobuf/timestamp.proto";
+
+message BottleProduceRequest {
+  string requestId = 1;
+  google.protobuf.Timestamp timestamp = 2;
+}
+
+message Bottle {
+  string requestId = 1;
+  google.protobuf.Timestamp timestamp = 2;
+  string bottleSerialNumber = 3;
+}
+
+service BottleProducerService {
+  rpc produceBottle(BottleProduceRequest) returns (Bottle);
+}

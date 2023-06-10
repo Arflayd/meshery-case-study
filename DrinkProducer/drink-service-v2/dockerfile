@@ -1,0 +1,9 @@
+FROM node:19-alpine
+
+WORKDIR /app
+
+COPY ./dist/app.js app.js
+
+EXPOSE 3001
+
+CMD ["node", "app.js"]

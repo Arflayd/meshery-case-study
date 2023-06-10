@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drinks-v2
+  labels:
+    app: drinks
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drinks
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: drinks
+        version: v2
+    spec:
+      containers:
+      - name: drinks
+        image: meshery20/drink-producer:v2
+        ports:
+        - containerPort: 3001
+        imagePullPolicy: Always
+

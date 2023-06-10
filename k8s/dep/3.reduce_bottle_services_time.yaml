@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bottles-dep-new-line
+  labels:
+    app: bottles
+    version: v3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bottles
+      version: v3
+  template:
+    metadata:
+      labels:
+        app: bottles
+        version: v3
+    spec:
+      containers:
+      - name: bottles
+        image: meshery20/bottle-producer:1.1.0
+        ports:
+        - containerPort: 3002
+        env:
+        - name: SERVER_PORT
+          value: "3002"
+        - name: BASE_PRODUCTION_TIME_MS
+          value: "5"
+        - name: MAX_PRODUCTION_DELAY_MS
+          value: "10"
+        - name: PRODUCTION_FAIL_PROBABILITY
+          value: "0.001"
+        imagePullPolicy: Always
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: bottles-vs
+spec:
+  hosts:
+  - bottles
+  http:
+  - route:
+    - destination:
+        host: bottles
+        subset: v1
+      weight: 10
+    - destination:
+        host: bottles
+        subset: v2
+      weight: 10
+    - destination:
+        host: bottles
+        subset: v3
+      weight: 80
