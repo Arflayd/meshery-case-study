@@ -1,2 +1,4 @@
 # Meshery Case Study
-Overleaf documentation: https://www.overleaf.com/read/bybqtdjpcbyj
+Case study documentation: [Documentation](documentation.pdf)
+
+<img src="architecture.png" width="600">
